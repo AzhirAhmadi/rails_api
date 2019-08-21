@@ -34,6 +34,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # my gem
 gem 'rspec-rails'
 gem 'factory_bot_rails'
+gem 'annotate'
+gem 'active_model_serializers'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

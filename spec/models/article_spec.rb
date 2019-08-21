@@ -1,5 +1,49 @@
+# == Schema Information
+#
+# Table name: articles
+#
+#  id         :integer          not null, primary key
+#  title      :string
+#  content    :text
+#  slug       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 require 'rails_helper'
 
+#add this config to apply this changes to test code{ config.include FactoryBot::Syntax::Methods }
+#FactoryBot.build => build
+#FactoryBot.create => create
+
 RSpec.describe Article, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "#validations" do
+    it "should test that the factory is valid" do
+      expect(build :article).to be_valid
+    end
+
+    it "should validate the presence of the title" do
+      article = build :article, title: ""
+      expect(article).not_to be_valid
+      expect(article.errors.messages[:title]).to include("can't be blank")
+    end
+
+    it "should validate the presence of the content" do
+      article =build :article, content: ""
+      expect(article).not_to be_valid
+      expect(article.errors.messages[:content]).to include("can't be blank")
+    end
+
+    it "should validate the presence of the content" do
+      article =build :article, slug: ""
+      expect(article).not_to be_valid
+      expect(article.errors.messages[:slug]).to include("can't be blank")
+    end
+
+    it "should validate uniqueness of the slug" do
+      article = create :article
+      invalid_article = build :article, slug: article.slug
+      expect(invalid_article).not_to be_valid
+    end
+  end
 end
