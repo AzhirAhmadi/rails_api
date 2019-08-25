@@ -7,15 +7,13 @@ class UserAuthenticator
     end
 
     def perform
-        
-        if token.try(:error).present?
-            raise AuthenticationError
+        raise AuthenticationError if code.blank?
+        raise AuthenticationError if token.try(:error).present?
+        prrepare_user
+        @access_token = if user.access_token.present?
+            user.access_token
         else
-            prrepare_user
-            @access_token = if user.access_token.present?
-                user.access_token
-            else
-                user.create_access_token
+            user.create_access_token(token: token)
         end
     end
 
@@ -44,5 +42,4 @@ class UserAuthenticator
                 User.create(user_data.merge(provider: "github"))
             end
         end
-
 end
