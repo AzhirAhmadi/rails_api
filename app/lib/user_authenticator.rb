@@ -1,27 +1,48 @@
 class UserAuthenticator 
     class AuthenticationError < StandardError; end
-    attr_reader :user
+    attr_reader :user, :access_token
 
     def initialize(code)
         @code = code
     end
 
     def perform
-        client = Octokit::Client.new(
-            client_id: "836b314d9f71e85a5f14",
-            client_secret: "dc2528e56f5e8f95fd07399cfab70e4680d67abb"
-        )
-        token = client.exchange_code_for_token(code)
+        
         if token.try(:error).present?
             raise AuthenticationError
         else
-            user_client = Octokit::Client.new(access_token: token)
-            user_data = user_client.user.to_h.slice(:login, :avatar_url, :url, :name)
-            User.create(user_data.merge(provider: "github"))
-
+            prrepare_user
+            @access_token = if user.access_token.present?
+                user.access_token
+            else
+                user.create_access_token
         end
     end
 
     private
         attr_reader :code
+
+        def client
+            @client ||= Octokit::Client.new(
+                client_id: "836b314d9f71e85a5f14",
+                client_secret: "dc2528e56f5e8f95fd07399cfab70e4680d67abb"
+            )
+        end
+
+        def token
+            @token = client.exchange_code_for_token(code)
+        end
+
+        def user_data
+            @user_data = Octokit::Client.new(access_token: token).user.to_h.slice(:login, :avatar_url, :url, :name)
+        end
+
+        def prrepare_user
+            @user = if User.exists?(login: user_data[:login])
+                User.find_by(login: user_data[:login])
+            else
+                User.create(user_data.merge(provider: "github"))
+            end
+        end
+
 end
