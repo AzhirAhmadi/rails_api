@@ -20,5 +20,4 @@ module Shared_helper
             expect(json["errors"]).to include(error)
         end
     end
-
 end
