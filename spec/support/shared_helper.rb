@@ -20,4 +20,23 @@ module Shared_helper
             expect(json["errors"]).to include(error)
         end
     end
+
+    shared_examples_for "forbidden_requests" do
+        it "should return 403 status code" do
+            subject
+            expect(response).to have_http_status(:forbidden)
+        end
+
+        it "should return proper error json" do
+            authorization_error = {
+                "status" => 403,
+                "source" => { "pointer" => "/headers/authorization" },
+                "title" => "Not authorized",
+                "detail" => "You have no right to access this resource."
+            }
+            subject
+            expect(json["errors"]).to eq(authorization_error)
+        end
+    end
+
 end

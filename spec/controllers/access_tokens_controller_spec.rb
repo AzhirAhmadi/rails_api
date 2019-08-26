@@ -67,39 +67,31 @@ RSpec.describe AccessTokensController, type: :controller do
     end
 
     describe "DELETE #destroy" do
-        context "when invalid requeset" do
-            let(:authorization_error) do
-                {
-                    "status" => 403,
-                    "source" => { "pointer" => "/code" },
-                    "title" => "Authentication code is invalid",
-                    "detail" => "You must provide valid code in order to exchange it for token."
-                }
-            end
-            
-            it "should return 403 status code" do
-                pending
-                subject
-                expect(response).to have_http_status(:forbidden)
-            end
+        subject { delete :destroy }
+        context "when no authorization header provided" do
+            it_behaves_like "forbidden_requests"
+        end
 
-            it "should return proper error json" do
-                pending
+        context "when invalid authorization header provided" do
+            before { request.headers["authorization"] = "Inavlid token"}
 
-                authorization_error = {
-                    "status" => 403,
-                    "source" => { "pointer" => "/code" },
-                    "title" => "Authentication code is invalid",
-                    "detail" => "You must provide valid code in order to exchange it for token."
-                }
-                subject
-                expect(json["error"]).to eq(authorization_error)
-            end
-
+            it_behaves_like "forbidden_requests"
         end
 
         context "when valid request" do
+            let(:user) { create :user }
+            let(:access_token) { user.create_access_token }
 
+            before { request.headers["authorization"] = "Bearer #{access_token.token}"}
+
+            it "should return 204 status code" do
+                subject
+                expect(response).to have_http_status(:no_content)
+            end
+
+            it "should remove the proper access token" do
+                expect{ subject }.to change{ AccessToken.count }.by(-1)
+            end
         end
     end
 end
