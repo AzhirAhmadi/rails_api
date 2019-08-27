@@ -23,44 +23,29 @@ RSpec.describe AccessTokensController, type: :controller do
         end
 
         context "when success request" do
-            it "should return 201 status code" do
-                user_data = {
-                    login: "jsmith1",
-                    url: "http://example.com",
-                    avatar_url: "http://example.com/avatar",
-                    name: "John Smith"
+            subject{post :create, params: {code: "valid_code "}}
+            let(:user_data) do{
+                login: "jsmith1",
+                url: "http://example.com",
+                avatar_url: "http://example.com/avatar",
+                name: "John Smith"
                 }
-
+            end
+            before do
                 allow_any_instance_of(Octokit::Client).to receive(
                     :exchange_code_for_token).and_return("valid_access_token")
 
                 allow_any_instance_of(Octokit::Client).to receive(
                     :user).and_return(user_data)
-
-                post :create, params: {code: "valid_code "}
-
+            end
+            it "should return 201 status code" do
+                subject
                 expect(response).to have_http_status(:created)
             end
 
             it "should return proper json body" do
-                user_data = {
-                    login: "jsmith1",
-                    url: "http://example.com",
-                    avatar_url: "http://example.com/avatar",
-                    name: "John Smith"
-                }
-
-                allow_any_instance_of(Octokit::Client).to receive(
-                    :exchange_code_for_token).and_return("valid_access_token")
-
-                allow_any_instance_of(Octokit::Client).to receive(
-                    :user).and_return(user_data)
-
-                
-                expect{ post :create, params: {code: "valid_code "} }.to change{ User.count }.by(1)
-
+                expect{ subject }.to change{ User.count }.by(1)
                 user = User.find_by( login: "jsmith1" )
-
                 expect(json_data["attributes"]).to eq({"token" => user.access_token.token})
             end
         end
@@ -74,7 +59,6 @@ RSpec.describe AccessTokensController, type: :controller do
 
         context "when invalid authorization header provided" do
             before { request.headers["authorization"] = "Inavlid token"}
-
             it_behaves_like "forbidden_requests"
         end
 

@@ -12,7 +12,7 @@ describe UserAuthenticator do
 
                 authenticator = described_class.new("sample_code")
 
-                expect{authenticator.perform}.to raise_error(UserAuthenticator::AuthenticationError)
+                expect{authenticator.perform}.to raise_error(ErrorHandeler::AuthenticationError)
 
                 expect(authenticator.user).to be_nil
             end

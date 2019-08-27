@@ -20,7 +20,7 @@ module Shared_helper
             expect(json["errors"]).to include(error)
         end
     end
-
+                         
     shared_examples_for "forbidden_requests" do
         it "should return 403 status code" do
             subject

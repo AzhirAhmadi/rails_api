@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-    
+    before_action :authorize!
 
     rescue_from ErrorHandeler::AuthenticationError, with: :authentication_error
     rescue_from ErrorHandeler::AuthorizationError, with: :authorization_error
