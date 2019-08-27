@@ -112,7 +112,6 @@ RSpec.describe ArticlesController, type: :controller do
             end
 
             context "and success request sent" do
-                let(:access_token) { create :access_token}
                 before { request.headers["authorization"] = "Bearer #{access_token.token}" }
 
                 let(:valid_attributes) do
@@ -164,7 +163,7 @@ RSpec.describe ArticlesController, type: :controller do
 
         context "when tring to update not owend article" do
             let(:other_user) { create :user}
-            let(:other_article) { create :article, user: other_article}
+            let(:other_article) { create :article, user: other_user}
             subject {patch :update, params: { id: other_article.id } }
             before { request.headers["authorization"] = "Bearer #{access_token}" } 
 
@@ -213,7 +212,6 @@ RSpec.describe ArticlesController, type: :controller do
             end
 
             context "and success request sent" do
-                let(:access_token) { create :access_token}
                 before { request.headers["authorization"] = "Bearer #{access_token.token}" }
 
                 let(:valid_attributes) do
