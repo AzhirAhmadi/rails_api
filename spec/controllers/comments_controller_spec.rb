@@ -56,35 +56,61 @@ RSpec.describe CommentsController, type: :controller do
       before { request.headers["authorization"] = "Bearer #{access_token.token}" }
 
       context "with invalid params" do
-        let(:invalid_attributes) {
-          { content: ""}
-        }
+        let(:invalid_attributes) do
+          { "data" => {
+              "attributes" => {
+                "content" => ""
+                }
+              }
+          }
+        end
 
-        subject{ post :create, params: { article_id: article.id, comment: invalid_attributes} }
+        subject do
+           post :create, params: invalid_attributes.merge(article_id: article.id)
+        end
+
+        it "should return 422 status code" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
 
         it "renders a JSON response with errors for the new comment" do
           subject
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(response.content_type).to eq('application/json')
+          expect(json["errors"]).to include({
+            "source" => { "pointer" => "/data/attributes/content" },
+            "detail" =>  "can't be blank"
+          })
         end
       end
 
       context "with valid params" do
-        let(:valid_attributes) {
-          { content: "Content"}
-        }
+        let(:valid_attributes) do
+          { "data" => {
+            "attributes" => {
+               "content" => "Content"
+              }
+            }
+          }
+        end
         
-        subject{ post :create, params: { article_id: article.id, comment: valid_attributes} }
-        
+        subject do
+           post :create, params: valid_attributes.merge(article_id: article.id)
+        end
+
+        it "should 201 status code" do
+          subject
+          expect(response).to have_http_status(:created)
+        end
+
         it "creates a new Comment" do
-          expect {subject}.to change(Comment, :count).by(1)
+          expect {subject}.to change(article.comments, :count).by(1)
         end
 
         it "renders a JSON response with the new comment" do
           subject
-          expect(response).to have_http_status(:created)
-          expect(response.content_type).to eq('application/json')
-          expect(response.location).to eq( article_url(article))
+          expect(json_data["attributes"]).to eq({
+            "content" => "Content"
+          })
         end
       end
     end

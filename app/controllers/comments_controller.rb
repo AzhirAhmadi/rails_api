@@ -7,19 +7,22 @@ class CommentsController < ApplicationController
 
   def create
     comment = article.comments.build(comment_params.merge(user: current_user))
-
-    if comment.save
-      render json: comment, status: :created, location: article
-    else
-      render json: comment.errors, status: :unprocessable_entity
-    end
-  end
-  def article
-    article = Article.find(params[:article_id])
+    comment.save!
+    render json: comment, status: :created, location: article
+  rescue
+    render json: comment, adaptor: :json_api,
+      serializer: ErrorHandeler::ErrorSerializer,
+      status: :unprocessable_entity
   end
 
   private
     def comment_params
-      params.require(:comment).permit(:content)
+      params.require(:data).require(:attributes).
+      permit(:content) ||
+      ActionController::Parameters.new
+    end
+
+    def article
+      article = Article.find(params[:article_id])
     end
 end
