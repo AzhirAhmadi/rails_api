@@ -31,6 +31,16 @@ class ArticlesController < ApplicationController
             serializer: ErrorHandeler::ErrorSerializer,
             status: :unprocessable_entity
     end
+
+    def destroy
+        article = current_user.articles.find(params[:id])
+        article.destroy
+        head :no_content
+    rescue
+        render json: article, adaptor: :json_api,
+            serializer: ErrorHandeler::ErrorSerializer,
+            status: :unprocessable_entity
+    end
     
     private
 
