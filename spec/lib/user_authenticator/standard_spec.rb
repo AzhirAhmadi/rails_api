@@ -3,7 +3,7 @@ require "rails_helper"
 describe UserAuthenticator::Standard do
     describe "#perform" do
         let(:authenticator) { described_class.new("jsmith", "password")}
-        subject( authenticator.perform)
+        subject{ authenticator.perform}
 
         shared_examples_for "invalid_authentication" do
             before { user }
