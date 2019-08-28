@@ -9,9 +9,9 @@ describe UserAuthenticator::Standard do
             before { user }
             it "should raise an error" do
                 expect{subject}.to raise_error(
-                    ErrorHandler::UserAuthenticator::Standard
+                    ErrorHandeler::AuthenticationError::Standard
                 )
-                expect(authenticator.user).to be_nill
+                expect(authenticator.user).to be_nil
             end
         end
 

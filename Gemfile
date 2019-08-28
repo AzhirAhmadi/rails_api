@@ -39,6 +39,8 @@ gem 'kaminari'
 # Ruby toolkit for the GitHub API. 
 gem 'octokit' 
 
+gem 'bcrypt'
+
 group :production do
   gem "pg"
 end
