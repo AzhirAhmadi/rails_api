@@ -59,5 +59,4 @@ module Shared_helper
             expect(json["errors"]).to eq(authorization_error)
         end
     end
-
 end
