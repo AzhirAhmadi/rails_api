@@ -1,25 +1,20 @@
-class UserAuthenticator 
+class UserAuthenticator::Oauth < UserAuthenticator
     
-    attr_reader :authenticator
+    attr_reader :user, :access_token
 
     def initialize(code)
-        @authenticator = if code.present?
-            Oauth.new(code)
-        else
-            Standard.new(login: nil, password: nil)
-        end
+        @code = code
     end
 
     def perform
-        authenticator.perform
-    end
-
-    def user
-        authenticator.user
-    end
-
-    def access_token
-        authenticator.access_token
+        raise ErrorHandeler::AuthenticationError::Oauth if code.blank?
+        raise ErrorHandeler::AuthenticationError::Oauth if token.try(:error).present?
+        prrepare_user
+        @access_token = if user.access_token.present?
+            user.access_token
+        else
+            user.create_access_token(token: token)
+        end
     end
 
     private

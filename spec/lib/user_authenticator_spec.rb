@@ -2,27 +2,22 @@ require "rails_helper"
 
 describe UserAuthenticator do
     describe "#perform" do
-
         context "when code is incorrect" do
             it "should raise an error" do
                 github_error = double("Sawyer::Resource", error: "bad_verification_code")
 
-                allow_any_instance_of(Octokit::Client).to receive(
-                    :exchange_code_for_token).and_return(github_error)
+                allow_any_instance_of(Octokit::Client).to receive(:exchange_code_for_token).and_return(github_error)
 
                 authenticator = described_class.new("sample_code")
 
-                expect{authenticator.perform}.to raise_error(ErrorHandeler::AuthenticationError)
+                expect{authenticator.perform}.to raise_error(ErrorHandeler::AuthenticationError::Oauth)
 
                 expect(authenticator.user).to be_nil
             end
         end
         
         context "when code is correct" do
-            
-            
             it "should save the user when does not exists" do
-
                 user_data = {
                     login: "jsmith1",
                     url: "http://example.com",
@@ -44,7 +39,6 @@ describe UserAuthenticator do
             end
 
             it "should reuse already ergistered user" do
-
                 user_data = {
                     login: "jsmith1",
                     url: "http://example.com",
@@ -68,7 +62,6 @@ describe UserAuthenticator do
             end
 
             it "should create and set user's access token" do
-
                 user_data = {
                     login: "jsmith1",
                     url: "http://example.com",
