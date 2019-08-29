@@ -129,6 +129,7 @@ RSpec.describe ArticlesController, type: :controller do
                 subject { post :create, params: valid_attributes }
 
                 it "should have 201 status code" do
+                    pp request.headers
                     subject
                     expect(response).to have_http_status(:created)
                 end
