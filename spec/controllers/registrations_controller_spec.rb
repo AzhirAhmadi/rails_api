@@ -58,7 +58,7 @@ describe RegistrationsController do
 
             it "shloud create a user" do
                 expect(User.exists?(login: params["data"]["attributes"]["login"])).to be_falsey
-                expect(subject).to change{ User.count}.by(1)
+                expect{subject}.to change{ User.count}.by(1)
                 expect(User.exists?(login: params["data"]["attributes"]["login"])).to be_truthy
             end
         end
