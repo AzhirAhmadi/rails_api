@@ -60,27 +60,6 @@ describe UserAuthenticator::Oauth do
 
                 expect( authenticator.user ).to eq(user)
             end
-
-            it "should create and set user's access token" do
-                user_data = {
-                    login: "jsmith1",
-                    url: "http://example.com",
-                    avatar_url: "http://example.com/avatar",
-                    name: "John Smith"
-                }
-
-                allow_any_instance_of(Octokit::Client).to receive(
-                    :exchange_code_for_token).and_return("valid_access_token")
-
-                allow_any_instance_of(Octokit::Client).to receive(
-                    :user).and_return(user_data)
-
-                authenticator = described_class.new("sample_code")
-                
-                expect{ authenticator.perform }.to change{ AccessToken.count }.by(1)
-
-                expect(authenticator.access_token).to be_present
-            end
         end
     end
 end

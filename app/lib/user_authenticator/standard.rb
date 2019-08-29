@@ -1,5 +1,5 @@
 class UserAuthenticator::Standard < UserAuthenticator
-    attr_reader :user, :access_token
+    attr_reader :user
     
     def initialize(login, password)
         @login = login
@@ -13,9 +13,10 @@ class UserAuthenticator::Standard < UserAuthenticator
         user =User.find_by(login: login)
 
         raise ErrorHandeler::AuthenticationError::Standard unless user.password == password
+
+        @user = user
     end
 
     private
-
         attr_reader :login, :password
 end
