@@ -41,6 +41,8 @@ gem 'octokit'
 
 gem 'bcrypt'
 
+gem 'figaro'
+
 group :production do
   gem "pg"
 end

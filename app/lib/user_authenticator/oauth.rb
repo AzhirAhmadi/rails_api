@@ -17,8 +17,8 @@ class UserAuthenticator::Oauth < UserAuthenticator
 
         def client
             @client ||= Octokit::Client.new(
-                client_id: "836b314d9f71e85a5f14",
-                client_secret: "dc2528e56f5e8f95fd07399cfab70e4680d67abb"
+                client_id: ENV["client_id"],
+                client_secret: ENV["client_secret"]
             )
         end
 
